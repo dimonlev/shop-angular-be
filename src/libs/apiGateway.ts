@@ -1,11 +1,9 @@
 import { Product } from '@functions/ProductType';
 
 export const formatJSONResponse = (
-  product: Product | Product[],
+  product: Product | Product[] | string,
   statusCode: number = 200
-  // options: { message?: string } = {}
 ) => {
-  // const response = options.message ? options : product;
   return {
     statusCode,
     body: JSON.stringify(product),

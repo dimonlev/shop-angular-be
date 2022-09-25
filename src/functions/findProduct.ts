@@ -1,4 +1,4 @@
 import { Product } from '@functions/ProductType';
 
 export const findProduct = (arr: Product[], id: string) =>
-  arr.find((product) => product.id === id);
+  arr.find((product) => product.id === id) ?? 'product not found';
