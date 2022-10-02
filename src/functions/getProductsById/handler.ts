@@ -7,8 +7,6 @@ import { products } from '../products';
 import { APIGatewayProxyEvent } from 'aws-lambda';
 import { findProduct } from '@functions/findProduct';
 
-// import schema from './schema';
-
 const getProductsById = async (event: APIGatewayProxyEvent) => {
   const { productId } = event.pathParameters;
   return formatJSONResponse(findProduct(products, productId));

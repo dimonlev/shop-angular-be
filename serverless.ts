@@ -2,6 +2,13 @@ import type { AWS } from '@serverless/typescript';
 
 import getProductsList from '@functions/getProductsList';
 import getProductsById from '@functions/getProductsById';
+import getProductsByIdPG from '@functions/getProductsByIdPG';
+import getProductsListPG from '@functions/getProductsListPG';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+const { PG_HOST, PG_DATABASE, PG_USERNAME, PG_PASSWORD } = process.env;
 
 const serverlessConfiguration: AWS = {
   service: 'shop-angular-be',
@@ -22,12 +29,22 @@ const serverlessConfiguration: AWS = {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
     },
+    environment: {
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      PG_HOST: PG_HOST,
+      PG_PORT: '5432',
+      PG_DATABASE: PG_DATABASE,
+      PG_USERNAME: PG_USERNAME,
+      PG_PASSWORD: PG_PASSWORD,
+    },
     lambdaHashingVersion: '20201221',
   },
   // import the function via paths
   functions: {
     getProductsList,
     getProductsById,
+    getProductsListPG,
+    getProductsByIdPG,
   },
 };
 
