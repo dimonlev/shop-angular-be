@@ -5,7 +5,7 @@ import { formatJSONResponse } from '@libs/apiGateway';
 import { middyfy } from '@libs/lambda';
 import { products } from '../products';
 import { APIGatewayProxyEvent } from 'aws-lambda';
-import { findProduct } from '@functions/findProduct';
+import { findProduct } from 'src/product-service/findProduct';
 
 const getProductsById = async (event: APIGatewayProxyEvent) => {
   const { productId } = event.pathParameters;

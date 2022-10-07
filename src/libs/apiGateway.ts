@@ -1,4 +1,4 @@
-import { Product } from '@functions/ProductType';
+import { Product } from 'src/product-service/ProductType';
 
 export const formatJSONResponse = (
   product: Product | Product[] | string,
