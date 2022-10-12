@@ -1,9 +1,39 @@
-import 'source-map-support/register';
-import { formatJSONResponse } from '@libs/apiGateway';
+import * as dotenv from 'dotenv';
 import { middyfy } from '@libs/lambda';
+import * as AWS from 'aws-sdk';
+import { APIGatewayProxyEvent } from 'aws-lambda';
 
-const importProductsFile = async () => {
-  return formatJSONResponse('in progress');
+dotenv.config();
+
+const s3 = new AWS.S3({ region: 'eu-west-1' });
+const bucket = process.env.BUCKET;
+export const importProductsFile = async (event: APIGatewayProxyEvent) => {
+  try {
+    const s3Params = {
+      Bucket: bucket,
+      Key: `uploaded/${event.queryStringParameters.name}`,
+      Expires: 300,
+      ContentType: 'text/csv',
+    };
+    const uploadURL = await s3.getSignedUrlPromise('putObject', s3Params);
+    return {
+      statusCode: 200,
+      body: JSON.stringify(uploadURL),
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true,
+      },
+    };
+  } catch (err) {
+    return {
+      statusCode: 200,
+      body: JSON.stringify(err),
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true,
+      },
+    };
+  }
 };
 
 export const main = middyfy(importProductsFile);

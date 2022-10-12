@@ -2,11 +2,10 @@ import type { AWS } from '@serverless/typescript';
 
 import * as dotenv from 'dotenv';
 import importProductsFile from '@functions/importProductsFile';
+import importFileParser from '@functions/importFileParser';
 
 dotenv.config();
-
-const { PG_HOST, PG_DATABASE, PG_USERNAME, PG_PASSWORD } = process.env;
-
+const bucket = process.env.BUCKET;
 const serverlessConfiguration: AWS = {
   service: 'import-service',
   frameworkVersion: '3',
@@ -22,23 +21,29 @@ const serverlessConfiguration: AWS = {
     runtime: 'nodejs16.x',
     region: 'eu-west-1',
     stage: 'dev',
+  
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
     },
-    environment: {
-      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      PG_HOST: PG_HOST,
-      PG_PORT: '5432',
-      PG_DATABASE: PG_DATABASE,
-      PG_USERNAME: PG_USERNAME,
-      PG_PASSWORD: PG_PASSWORD,
-    },
+    iamRoleStatements: [
+      {
+        Effect: 'Allow',
+        Action: ['s3:ListBucket'],
+        Resource: [`arn:aws:s3:::${bucket}`],
+      },
+      {
+        Effect: 'Allow',
+        Action: ['s3:*'],
+        Resource: [`arn:aws:s3:::${bucket}/*`],
+      },
+    ],
+
     lambdaHashingVersion: '20201221',
   },
-  // import the function via paths
   functions: {
     importProductsFile,
+    importFileParser,
   },
 };
 
