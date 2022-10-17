@@ -6,6 +6,7 @@ import getProductsByIdPG from '@functions/getProductsByIdPG';
 import getProductsListPG from '@functions/getProductsListPG';
 import postProductPG from '@functions/postProductPG';
 import * as dotenv from 'dotenv';
+import catalogBatchProcess from '@functions/catalogBatchProcess';
 
 dotenv.config();
 
@@ -47,6 +48,7 @@ const serverlessConfiguration: AWS = {
     getProductsListPG,
     getProductsByIdPG,
     postProductPG,
+    catalogBatchProcess
   },
 };
 

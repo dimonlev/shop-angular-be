@@ -5,16 +5,12 @@ export default {
   handler: `${handlerPath(__dirname)}/handler.main`,
   events: [
     {
-      event: [
-        {
-          sqs: {
-            batchSize: 5,
-            arn: {
-              'Fn::GetAtt': ['catalogItemsQueue', 'Arn'],
-            },
-          },
+      sqs: {
+        batchSize: 5,
+        arn: {
+          'Fn::GetAtt': ['catalogItemsQueue', 'Arn'],
         },
-      ],
+      },
     },
   ],
 };
