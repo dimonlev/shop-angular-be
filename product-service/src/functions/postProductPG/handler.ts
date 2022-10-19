@@ -1,9 +1,9 @@
 import { formatJSONResponse } from '@libs/apiGateway';
 import { middyfy } from '@libs/lambda';
-import { APIGatewayProxyEvent } from 'aws-lambda';
 import { Client } from 'pg';
 
 import * as dotenv from 'dotenv';
+import { Product } from '@functions/ProductType';
 
 dotenv.config();
 
@@ -20,9 +20,9 @@ const dbOptions = {
   connectionTimeoutMillis: 5000,
 };
 
-export const postProductPG = async (event: APIGatewayProxyEvent) => {
+export const postProductPG = async (body: Product) => {
   const { title, description, price, count, cover } = JSON.parse(
-    JSON.stringify(event.body)
+    JSON.stringify(body)
   );
 
   const client = new Client(dbOptions);

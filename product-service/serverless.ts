@@ -38,17 +38,100 @@ const serverlessConfiguration: AWS = {
       PG_DATABASE: PG_DATABASE,
       PG_USERNAME: PG_USERNAME,
       PG_PASSWORD: PG_PASSWORD,
+      SNS_ARN: {
+        Ref: 'SNSTopic',
+      },
     },
+    iamRoleStatements: [
+      {
+        Effect: 'Allow',
+        Action: ['sns:*'],
+        Resource: {
+          Ref: 'SNSTopic',
+        },
+      },
+      {
+        Effect: 'Allow',
+        Action: ['sqs:*'],
+        Resource: [
+          {
+            'Fn::GetAtt': ['catalogItemsQueue', 'Arn'],
+          },
+        ],
+      },
+    ],
     lambdaHashingVersion: '20201221',
   },
-  // import the function via paths
+  resources: {
+    Resources: {
+      catalogItemsQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: 'product-service-catalogItemsQueue',
+        },
+      },
+      SNSTopic: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: 'product-service-sqs-sns-topic',
+        },
+      },
+      SNSSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: 'sqs_aws1@gmail.com',
+          Protocol: 'email',
+          TopicArn: {
+            Ref: 'SNSTopic',
+          },
+        },
+      },
+      SNSSubscriptionFilteredBydescription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: 'sqs_aws2@gmail.com',
+          Protocol: 'email',
+          TopicArn: {
+            Ref: 'SNSTopic',
+          },
+          FilterPolicy: {
+            description: [{ prefix: 'Project2' }],
+          },
+        },
+      },
+    },
+    Outputs: {
+      QueueExpRef: {
+        Description: 'Export ref SQS',
+        Value: {
+          Ref: 'catalogItemsQueue',
+        },
+        Export: {
+          Name: {
+            'Fn::Sub': '${AWS::StackName}-QueueExpRef',
+          },
+        },
+      },
+      QueueExpArn: {
+        Description: 'Export ref SQS',
+        Value: {
+          'Fn::GetAtt': ['catalogItemsQueue', 'Arn'],
+        },
+        Export: {
+          Name: {
+            'Fn::Sub': '${AWS::StackName}-QueueExpArn',
+          },
+        },
+      },
+    },
+  },
   functions: {
     getProductsList,
     getProductsById,
     getProductsListPG,
     getProductsByIdPG,
     postProductPG,
-    catalogBatchProcess
+    catalogBatchProcess,
   },
 };
 
