@@ -5,7 +5,6 @@ import importProductsFile from '@functions/importProductsFile';
 import importFileParser from '@functions/importFileParser';
 
 dotenv.config();
-const bucket = process.env.BUCKET;
 const serverlessConfiguration: AWS = {
   service: 'import-service',
   frameworkVersion: '3',
@@ -21,7 +20,7 @@ const serverlessConfiguration: AWS = {
     runtime: 'nodejs16.x',
     region: 'eu-west-1',
     stage: 'dev',
-  
+
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
@@ -29,16 +28,14 @@ const serverlessConfiguration: AWS = {
     iamRoleStatements: [
       {
         Effect: 'Allow',
-        Action: ['s3:ListBucket'],
-        Resource: [`arn:aws:s3:::${bucket}`],
-      },
-      {
-        Effect: 'Allow',
-        Action: ['s3:*'],
-        Resource: [`arn:aws:s3:::${bucket}/*`],
+        Action: ['sqs:*'],
+        Resource: '${cf:shop-angular-be-dev.QueueExpArn}',
       },
     ],
-
+    environment: {
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      SQS_URL: '${cf:shop-angular-be-dev.QueueExpRef}',
+    },
     lambdaHashingVersion: '20201221',
   },
   functions: {
