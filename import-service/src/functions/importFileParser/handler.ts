@@ -8,6 +8,7 @@ import { S3Event } from 'aws-lambda';
 dotenv.config();
 
 const s3 = new AWS.S3({ region: 'eu-west-1' });
+const sqs = new AWS.SQS();
 const BUCKET = 'import-service-angular-be';
 const importFileParser = async (event: S3Event) => {
   try {
@@ -29,10 +30,29 @@ const importFileParser = async (event: S3Event) => {
           .pipe(
             csv({
               separator: ';',
-              headers: ['Title', 'Description', 'Price', 'Count', 'Cover'],
+              raw: true,
             })
           )
-          .on('data', (data) => results.push(data))
+          .on('data', async (data) => {
+            await new Promise<void>((resolve) => {
+              sqs.sendMessage(
+                {
+                  QueueUrl: process.env.SQS_URL,
+                  MessageBody: JSON.stringify(data).replace(/^\uFEFF/, ''),
+                },
+                (err) => {
+                  if (err) {
+                    console.log('error ', err);
+                  }
+                  console.log(
+                    'send message for ',
+                    JSON.stringify(data).replace(/\ufeff/gi, '')
+                  );
+                  resolve();
+                }
+              );
+            });
+          })
           .on('end', () => {
             console.log(results);
             resolve();
