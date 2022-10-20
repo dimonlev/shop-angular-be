@@ -1,10 +1,10 @@
 import type { AWS } from '@serverless/typescript';
 
-import getProductsList from 'src/product-service/getProductsList';
-import getProductsById from 'src/product-service/getProductsById';
-import getProductsByIdPG from 'src/product-service/getProductsByIdPG';
-import getProductsListPG from 'src/product-service/getProductsListPG';
-import postProductPG from 'src/product-service/postProductPG';
+import getProductsList from '@functions/getProductsList';
+import getProductsById from '@functions/getProductsById';
+import getProductsByIdPG from '@functions/getProductsByIdPG';
+import getProductsListPG from '@functions/getProductsListPG';
+import postProductPG from '@functions/postProductPG';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
