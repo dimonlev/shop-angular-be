@@ -1,12 +1,11 @@
 import type { AWS } from '@serverless/typescript';
-
-import getProductsList from '@functions/getProductsList';
-import getProductsById from '@functions/getProductsById';
+import * as dotenv from 'dotenv';
 import getProductsByIdPG from '@functions/getProductsByIdPG';
 import getProductsListPG from '@functions/getProductsListPG';
 import postProductPG from '@functions/postProductPG';
-import * as dotenv from 'dotenv';
 import catalogBatchProcess from '@functions/catalogBatchProcess';
+import putProductPG from '@functions/putProductPG';
+import deleteProductPG from '@functions/deleteProductPG';
 
 dotenv.config();
 
@@ -126,12 +125,12 @@ const serverlessConfiguration: AWS = {
     },
   },
   functions: {
-    getProductsList,
-    getProductsById,
     getProductsListPG,
     getProductsByIdPG,
     postProductPG,
     catalogBatchProcess,
+    putProductPG,
+    deleteProductPG,
   },
 };
 

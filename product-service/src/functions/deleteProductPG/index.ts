@@ -6,8 +6,8 @@ export default {
   events: [
     {
       http: {
-        method: 'get',
-        path: 'products',
+        method: 'delete',
+        path: 'productsPG',
         cors: true,
       },
     },

@@ -16,6 +16,13 @@ export default {
             },
           },
         },
+        authorizer: {
+          name: 'basicAuthorizer',
+          arn: '${cf:authorization-service-dev.AuthArn}',
+          resultTtlInSeconds: 0,
+          identitySource: 'method.request.header.Authorization',
+          type: 'token',
+        },
       },
     },
   ],

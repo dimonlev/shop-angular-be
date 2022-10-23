@@ -1,5 +1,4 @@
 import { postProductPG } from '@functions/postProductPG/handler';
-import { Product } from '@functions/ProductType';
 import { middyfy } from '@libs/lambda';
 import { SNS } from 'aws-sdk';
 import * as dotenv from 'dotenv';
@@ -29,10 +28,11 @@ export const catalogBatchProcess = async (event) => {
     };
   };
 
-  event.Records.forEach(async (body: Product) => {
+  for (let record of event.Records) {
+    const { body } = record;
     await postProductPG(body);
     const messageParams = getMessageParams(body);
     await sns.publish(messageParams).promise();
-  });
+  }
 };
 export const main = middyfy(catalogBatchProcess);
