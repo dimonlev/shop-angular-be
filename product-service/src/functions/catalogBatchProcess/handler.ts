@@ -1,20 +1,24 @@
 import { postProductPG } from '@functions/postProductPG/handler';
+import { Product } from '@functions/ProductType';
 import { middyfy } from '@libs/lambda';
+import { SQSEvent } from 'aws-lambda';
 import { SNS } from 'aws-sdk';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-export const catalogBatchProcess = async (event) => {
-  console.log('catalogBatchProcess ', event);
+const { TOPIC_ARN } = process.env;
+
+export const catalogBatchProcess = async (event: SQSEvent) => {
+  console.log('SQSEvent event: ', event);
 
   const sns = new SNS({ region: 'eu-west-1' });
 
-  const getMessageParams = (product) => {
+  const getMessageParams = (product: Omit<Product, 'id'>) => {
     return {
       Subject: 'Hello description',
       Message: JSON.stringify(product),
-      TopicArn: process.env.SNS_ARN,
+      TopicArn: TOPIC_ARN,
       MessageAttributes: {
         event: {
           DataType: 'String',
@@ -22,14 +26,26 @@ export const catalogBatchProcess = async (event) => {
         },
         description: {
           DataType: 'String',
-          StringValue: JSON.parse(product.replace(/^\uFEFF/gi, '')).description,
+          StringValue: JSON.parse(JSON.stringify(product)).description,
         },
       },
     };
   };
 
   for (let record of event.Records) {
-    const { body } = record;
+    console.log('record: ', record);
+
+    const { count, price, title, description, cover } = JSON.parse(record.body);
+    console.log('record.body: ', record.body);
+    console.log('JSON.parse(record.body): ', JSON.parse(record.body));
+    const body: Omit<Product, 'id'> = {
+      count,
+      price,
+      title,
+      description,
+      cover,
+    };
+    console.log('body: ', body);
     await postProductPG(body);
     const messageParams = getMessageParams(body);
     await sns.publish(messageParams).promise();

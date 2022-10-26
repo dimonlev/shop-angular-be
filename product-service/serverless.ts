@@ -9,7 +9,16 @@ import deleteProductPG from '@functions/deleteProductPG';
 
 dotenv.config();
 
-const { PG_HOST, PG_DATABASE, PG_USERNAME, PG_PASSWORD } = process.env;
+const {
+  PG_HOST,
+  PG_DATABASE,
+  PG_USERNAME,
+  PG_PASSWORD,
+  QUEUE_NAME,
+  TOPIC_NAME,
+  SQS_ARN,
+  TOPIC_ARN,
+} = process.env;
 
 const serverlessConfiguration: AWS = {
   service: 'shop-angular-be',
@@ -40,6 +49,10 @@ const serverlessConfiguration: AWS = {
       SNS_ARN: {
         Ref: 'SNSTopic',
       },
+      QUEUE_NAME,
+      TOPIC_NAME,
+      SQS_ARN,
+      TOPIC_ARN,
     },
     iamRoleStatements: [
       {
@@ -49,30 +62,15 @@ const serverlessConfiguration: AWS = {
           Ref: 'SNSTopic',
         },
       },
-      {
-        Effect: 'Allow',
-        Action: ['sqs:*'],
-        Resource: [
-          {
-            'Fn::GetAtt': ['catalogItemsQueue', 'Arn'],
-          },
-        ],
-      },
     ],
     lambdaHashingVersion: '20201221',
   },
   resources: {
     Resources: {
-      catalogItemsQueue: {
-        Type: 'AWS::SQS::Queue',
-        Properties: {
-          QueueName: 'product-service-catalogItemsQueue',
-        },
-      },
       SNSTopic: {
         Type: 'AWS::SNS::Topic',
         Properties: {
-          TopicName: 'product-service-sqs-sns-topic',
+          TopicName: TOPIC_NAME,
         },
       },
       SNSSubscription: {
@@ -82,43 +80,6 @@ const serverlessConfiguration: AWS = {
           Protocol: 'email',
           TopicArn: {
             Ref: 'SNSTopic',
-          },
-        },
-      },
-      SNSSubscriptionFilteredBydescription: {
-        Type: 'AWS::SNS::Subscription',
-        Properties: {
-          Endpoint: 'sqs_aws2@gmail.com',
-          Protocol: 'email',
-          TopicArn: {
-            Ref: 'SNSTopic',
-          },
-          FilterPolicy: {
-            description: [{ prefix: 'Project2' }],
-          },
-        },
-      },
-    },
-    Outputs: {
-      QueueExpRef: {
-        Description: 'Export ref SQS',
-        Value: {
-          Ref: 'catalogItemsQueue',
-        },
-        Export: {
-          Name: {
-            'Fn::Sub': '${AWS::StackName}-QueueExpRef',
-          },
-        },
-      },
-      QueueExpArn: {
-        Description: 'Export ref SQS',
-        Value: {
-          'Fn::GetAtt': ['catalogItemsQueue', 'Arn'],
-        },
-        Export: {
-          Name: {
-            'Fn::Sub': '${AWS::StackName}-QueueExpArn',
           },
         },
       },

@@ -4,6 +4,7 @@ import {
 } from 'aws-lambda';
 import 'source-map-support/register';
 import * as dotenv from 'dotenv';
+import { middyfy } from '@libs/lambda';
 dotenv.config();
 
 const generatePolicy = (
@@ -24,14 +25,17 @@ const generatePolicy = (
   },
 });
 
-export const basicAuthorizer = async (
+const basicAuthorizer = async (
   event: APIGatewayTokenAuthorizerEvent,
   _context,
   callback: APIGatewayAuthorizerCallback
 ) => {
+  console.log('authToken: ', event.authorizationToken);
+  console.log(`event['type']: `, event['type']);
   if (event['type'] !== 'TOKEN') callback('Unauthorized');
   try {
     const authToken = event.authorizationToken;
+    console.log('authToken', authToken);
     const encodedCreds = authToken.split(' ')[1];
     const buff = Buffer.from(encodedCreds, 'base64');
     const plainCredsv = buff.toString('utf-8').split(':');
@@ -40,6 +44,7 @@ export const basicAuthorizer = async (
     if (!userPass || !userPass) callback('Unauthorized');
 
     const storedUserPass = process.env[userName];
+    console.log('storedUserPass', storedUserPass);
     const effect =
       !storedUserPass || storedUserPass !== userPass ? 'Deny' : 'Allow';
     const policy = generatePolicy(encodedCreds, event.methodArn, effect);
@@ -48,3 +53,5 @@ export const basicAuthorizer = async (
     callback('Unauthorized: ', error.message);
   }
 };
+
+export const main = middyfy(basicAuthorizer);

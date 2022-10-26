@@ -20,7 +20,7 @@ const dbOptions = {
   connectionTimeoutMillis: 5000,
 };
 
-export const postProductPG = async (body: Product) => {
+export const postProductPG = async (body: Omit<Product, 'id'>) => {
   const { title, description, price, count, cover } = JSON.parse(
     JSON.stringify(body)
   );
@@ -31,10 +31,12 @@ export const postProductPG = async (body: Product) => {
     await client.connect();
     await client.query(`BEGIN`);
     const product = [title, description, price, cover];
+    console.log(product);
     const insertProduct =
       'INSERT INTO products (title, description, price, cover) VALUES ($1, $2, $3, $4) RETURNING id';
     const { rows: productsData } = await client.query(insertProduct, product);
     const counts = [count, productsData[0].id];
+    console.log(counts);
     const insertProductCount =
       'INSERT INTO stocks (count, product_id) VALUES ($1, $2)';
     await client.query(insertProductCount, counts);

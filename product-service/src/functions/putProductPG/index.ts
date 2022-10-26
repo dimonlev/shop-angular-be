@@ -6,7 +6,7 @@ export default {
   events: [
     {
       http: {
-        method: 'post',
+        method: 'put',
         path: 'productsPG',
         cors: true,
       },
