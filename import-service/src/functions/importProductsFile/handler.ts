@@ -6,7 +6,7 @@ import { APIGatewayProxyEvent } from 'aws-lambda';
 dotenv.config();
 
 const s3 = new AWS.S3({ region: 'eu-west-1' });
-const BUCKET = 'import-service-angular-be';
+const { BUCKET } = process.env;
 console.log(BUCKET);
 export const importProductsFile = async (event: APIGatewayProxyEvent) => {
   try {

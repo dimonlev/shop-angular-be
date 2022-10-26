@@ -5,6 +5,9 @@ import importProductsFile from '@functions/importProductsFile';
 import importFileParser from '@functions/importFileParser';
 
 dotenv.config();
+
+const { QUEUE_NAME, BUCKET_ARN, BUCKET, AUTH_ARN } = process.env;
+
 const serverlessConfiguration: AWS = {
   service: 'import-service',
   frameworkVersion: '3',
@@ -28,15 +31,61 @@ const serverlessConfiguration: AWS = {
     iamRoleStatements: [
       {
         Effect: 'Allow',
-        Action: ['sqs:*'],
-        Resource: '${cf:shop-angular-be-dev.QueueExpArn}',
+        Action: 's3:ListBucket',
+        Resource: `${BUCKET_ARN}/*`,
+      },
+      {
+        Effect: 'Allow',
+        Action: 's3:*',
+        Resource: `${BUCKET_ARN}/*`,
+      },
+      {
+        Effect: 'Allow',
+        Action: 'sqs:*',
+        Resource: [{ 'Fn::GetAtt': ['SQSQueue', 'Arn'] }],
       },
     ],
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      SQS_URL: '${cf:shop-angular-be-dev.QueueExpRef}',
+      SQSUrl: {
+        Ref: 'SQSQueue',
+      },
+      BUCKET,
+      AUTH_ARN,
     },
     lambdaHashingVersion: '20201221',
+  },
+  resources: {
+    Resources: {
+      SQSQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: `${QUEUE_NAME}`,
+        },
+      },
+      GatewayResponseAccessDenied: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+          },
+          ResponseType: 'ACCESS_DENIED',
+          RestApiId: '2ogd4otpgl',
+        },
+      },
+      GatewayResponseUnauthorized: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+          },
+          ResponseType: 'UNAUTHORIZED',
+          RestApiId: '2ogd4otpgl',
+        },
+      },
+    },
   },
   functions: {
     importProductsFile,

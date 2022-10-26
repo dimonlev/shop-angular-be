@@ -9,7 +9,7 @@ dotenv.config();
 
 const s3 = new AWS.S3({ region: 'eu-west-1' });
 const sqs = new AWS.SQS();
-const BUCKET = 'import-service-angular-be';
+const { BUCKET, SQSUrl } = process.env;
 const importFileParser = async (event: S3Event) => {
   try {
     const results = [];
@@ -27,27 +27,20 @@ const importFileParser = async (event: S3Event) => {
       await new Promise<void>((resolve) => {
         s3.getObject(params)
           .createReadStream()
-          .pipe(
-            csv({
-              separator: ';',
-              raw: true,
-            })
-          )
+          .pipe(csv())
           .on('data', async (data) => {
+            console.log('data: ', JSON.stringify(data));
             await new Promise<void>((resolve) => {
               sqs.sendMessage(
                 {
-                  QueueUrl: process.env.SQS_URL,
-                  MessageBody: JSON.stringify(data).replace(/^\uFEFF/, ''),
+                  QueueUrl: SQSUrl,
+                  MessageBody: JSON.stringify(data),
                 },
                 (err) => {
                   if (err) {
                     console.log('error ', err);
                   }
-                  console.log(
-                    'send message for ',
-                    JSON.stringify(data).replace(/\ufeff/gi, '')
-                  );
+                  console.log('send message for ', JSON.stringify(data));
                   resolve();
                 }
               );
