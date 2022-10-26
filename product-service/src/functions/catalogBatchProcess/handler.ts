@@ -35,15 +35,15 @@ export const catalogBatchProcess = async (event: SQSEvent) => {
   for (let record of event.Records) {
     console.log('record: ', record);
 
-    const { count, price, title, description, cover } = JSON.parse(record.body);
+    const { Count, Price, Title, Description, Cover } = JSON.parse(record.body);
     console.log('record.body: ', record.body);
     console.log('JSON.parse(record.body): ', JSON.parse(record.body));
     const body: Omit<Product, 'id'> = {
-      count,
-      price,
-      title,
-      description,
-      cover,
+      count: Count,
+      price: Price,
+      title: Title,
+      description: Description,
+      cover: Cover,
     };
     console.log('body: ', body);
     await postProductPG(body);

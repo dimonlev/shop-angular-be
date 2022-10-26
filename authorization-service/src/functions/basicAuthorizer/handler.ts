@@ -1,11 +1,35 @@
-import {
-  APIGatewayAuthorizerCallback,
-  APIGatewayTokenAuthorizerEvent,
-} from 'aws-lambda';
 import 'source-map-support/register';
 import * as dotenv from 'dotenv';
 import { middyfy } from '@libs/lambda';
+import { APIGatewayTokenAuthorizerEvent } from 'aws-lambda';
 dotenv.config();
+
+const basicAuthorizer = async (
+  event: APIGatewayTokenAuthorizerEvent,
+  ctx,
+  callback
+) => {
+  console.log('event: ', event);
+  console.log('authToken: ', event.authorizationToken);
+  console.log(`event['type']: `, event['type']);
+  if (event['type'] !== 'TOKEN') callback('Unauthorized');
+  try {
+    const authorizationToken = event.authorizationToken;
+    console.log('authorizationToken: ', authorizationToken);
+    const encodedCreds = authorizationToken.split(' ')[1];
+    const buff = Buffer.from(encodedCreds, 'base64');
+    const plainCreds = buff.toString('utf-8').split(':');
+    const [userName, password] = plainCreds;
+
+    const storedUserPassword = process.env[userName];
+    const effect =
+      !storedUserPassword || storedUserPassword !== password ? 'Deny' : 'Allow';
+    const policy = generatePolicy(encodedCreds, event.methodArn, effect);
+    callback(null, policy);
+  } catch (error) {
+    callback('Unauthorized: ', error.message);
+  }
+};
 
 const generatePolicy = (
   principalId: string,
@@ -24,34 +48,5 @@ const generatePolicy = (
     ],
   },
 });
-
-const basicAuthorizer = async (
-  event: APIGatewayTokenAuthorizerEvent,
-  _context,
-  callback: APIGatewayAuthorizerCallback
-) => {
-  console.log('authToken: ', event.authorizationToken);
-  console.log(`event['type']: `, event['type']);
-  if (event['type'] !== 'TOKEN') callback('Unauthorized');
-  try {
-    const authToken = event.authorizationToken;
-    console.log('authToken', authToken);
-    const encodedCreds = authToken.split(' ')[1];
-    const buff = Buffer.from(encodedCreds, 'base64');
-    const plainCredsv = buff.toString('utf-8').split(':');
-    const [userName, userPass] = plainCredsv;
-
-    if (!userPass || !userPass) callback('Unauthorized');
-
-    const storedUserPass = process.env[userName];
-    console.log('storedUserPass', storedUserPass);
-    const effect =
-      !storedUserPass || storedUserPass !== userPass ? 'Deny' : 'Allow';
-    const policy = generatePolicy(encodedCreds, event.methodArn, effect);
-    callback(null, policy);
-  } catch (error) {
-    callback('Unauthorized: ', error.message);
-  }
-};
 
 export const main = middyfy(basicAuthorizer);

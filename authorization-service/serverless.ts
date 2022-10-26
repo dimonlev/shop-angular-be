@@ -1,5 +1,4 @@
 import type { AWS } from '@serverless/typescript';
-
 import basicAuthorizer from '@functions/basicAuthorizer';
 
 const serverlessConfiguration: AWS = {
@@ -24,19 +23,6 @@ const serverlessConfiguration: AWS = {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
     },
     lambdaHashingVersion: '20201221',
-  },
-  resources: {
-    Outputs: {
-      AuthArn: {
-        Description: 'Auth Arn',
-        Value: {
-          'Fn::GetAtt': ['BasicAuthorizerLambdaFunction', 'Arn'],
-        },
-        Export: {
-          Name: 'AuthArn',
-        },
-      },
-    },
   },
   // import the function via paths
   functions: { basicAuthorizer },
