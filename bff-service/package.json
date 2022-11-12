@@ -1,0 +1,56 @@
+{
+  "name": "st-2-rest-api",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "repository": "git@git.epam.com:dmitry_levkovich/st-2-rest-api.git",
+  "author": "Dmitry Levkovich <dmitry_levkovich@epam.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon --delay 500ms --exec ts-node src/server.ts",
+    "start": "npm run migration:run && npm run dev",
+    "lint": "eslint",
+    "lint:fix": "eslint . --fix",
+    "migration:generate": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:generate -n",
+    "migration:run": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:run ",
+    "migration:revert": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:revert",
+    "test": "jest --coverage"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-joi-validation": "^5.0.0",
+    "joi": "^17.4.2",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^8.7.1",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.37",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^13.1.0",
+    "@commitlint/config-conventional": "^13.1.0",
+    "@types/express": "^4.17.13",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.9.0",
+    "@types/supertest": "^2.0.11",
+    "@typescript-eslint/eslint-plugin": "^4.31.0",
+    "@typescript-eslint/parser": "^4.31.0",
+    "eslint": "^7.32.0",
+    "jest": "^27.2.5",
+    "lint-staged": "^11.1.2",
+    "nodemon": "^2.0.12",
+    "supertest": "^6.1.6",
+    "ts-jest": "^27.0.5",
+    "ts-node": "^10.2.1",
+    "tsconfig-paths": "^3.11.0",
+    "tslib": "^2.3.1",
+    "typescript": "^4.4.2",
+    "winston": "^3.3.3"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "npm run lint:fix"
+    ]
+  }
+}
