@@ -1,193 +1,73 @@
-# st-2-rest-api
+<p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+</p>
 
-# API documentation:
+[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
+[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-## How to run app:
+  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+    <p align="center">
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
+<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
+<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
+<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
+<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
+<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
+  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
+    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
+  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
+</p>
+  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
+  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-### 1. If you want to start app in docker container you need just change DB credentials in ormconfig.ts and then run command "docker compose up", it will start development server and postgres database in different containers. Also you must to use PORT=3001 instead PORT=3000, for all queries. If you don't wanna do this, go to the next step.
+## Description
 
-### 2. Clone repository to local machine
+[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-### 3. Enter "npm install" or "yarn install"
+## Installation
 
-### 4. Enter command "npm run migration:run" or "yarn run migration:run" if you need to predefine database with values in your local machine, also you need to change database config in "ormconfig.ts" file, if you don't need this, go to the next step
+```bash
+$ npm install
+```
 
-### 5. Enter command "npm start" or "yarn start" to start server on http://localhost:3000/users
+## Running the app
 
----
+```bash
+# development
+$ npm run start
 
-## Task 4 and Task 5 endpoints:
+# watch mode
+$ npm run start:dev
 
-### 1. http://localhost:3000/users
+# production mode
+$ npm run start:prod
+```
 
-<details><summary>POST</summary>
- you need to send in your request:
+## Test
 
-body = {  
- &ensp;login: string;  
- &ensp;password: string;  
- &ensp;age: number;  
- &ensp;isDeleted: boolean;  
- }
+```bash
+# unit tests
+$ npm run test
 
- </details>
- <details><summary>GET</summary>
- you need to add in your query string:
+# e2e tests
+$ npm run test:e2e
 
-limit={number}, by default limit = 10  
-loginSubstring={string}  
-totally looks like:  
-http://localhost:3000/users?loginSubstring={string}&limit={number}  
-you can also use just one of this parameter,  
-but if no one use, by default return users without sort, but maximum 10
+# test coverage
+$ npm run test:cov
+```
 
- </details>
+## Support
 
-### 2. http://localhost:3000/users/{userId}
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
- <details><summary>GET</summary>
- add user ID to the end of string
+## Stay in touch
 
-totally looks like:  
- http://localhost:3000/users/{userId}  
- if doesn't have this user or something wrong you will get message
+- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
+- Website - [https://nestjs.com](https://nestjs.com/)
+- Twitter - [@nestframework](https://twitter.com/nestframework)
 
- </details>
- <details><summary>DELETE</summary>
- add user ID to the end of string  
-  
- totally looks like:  
- http://localhost:3000/users/{userId}  
- if doesn't have this user or this user already deleted you will get message
+## License
 
- </details>
- <details><summary>PUT</summary>
- add user ID to the end of string  
-  
- totally looks like:  
- http://localhost:3000/users/{userId}  
- you need to send in your request:
-
-body = {  
- &ensp;login: string;  
- &ensp;password: string;  
- &ensp;age: number;  
- &ensp;isDeleted: boolean;  
- }  
- you can change only this parameters
-
-also, if user already deleted, or doesn't exist, you can change nothing and will get a message
-
- </details>
-
----
-
-## Task 6 endpoints:
-
-### 1. http://localhost:3000/groups
-
-<details><summary>POST</summary>
- you need to send in your request:
-
-body = {  
- &ensp;name: string;  
- &ensp;permissions: Permission[];
-}  
-where permissions is an array of this type:  
-type Permission = 'READ' | 'WRITE' | 'DELETE' | 'SHARE' | 'UPLOAD_FILES';
-
- </details>
-
- <details><summary>GET</summary>
- don't need extra parameters
-
- </details>
-
-### 2. http://localhost:3000/groups/{groupId}
-
- <details><summary>GET</summary>
-
-you just need to add in your path id of group
-totally looks like:  
- http://localhost:3000/groups/{groupId}  
- if doesn't have this group or something wrong you will get message
-
- </details>
- <details><summary>DELETE</summary>
- 
- add group ID to the end of string  
-  
- totally looks like:  
- http://localhost:3000/groups/{groupId}  
- if doesn't have this group or this user already deleted you will get message
-
- </details>
- <details><summary>PUT</summary>
-
-add user ID to the end of string
-
-totally looks like:  
- http://localhost:3000/groups/{groupId}  
-you need to send in your request:
-
-body = {  
- &ensp;name: string;  
- &ensp;permissions: Permission[];
-}  
-where permissions is an array of this type:  
-type Permission = 'READ' | 'WRITE' | 'DELETE' | 'SHARE' | 'UPLOAD_FILES';
-
- </details>
-
-### 3. Task 6-3 http://localhost:3000/groups/{groupId}
-
-<details><summary>PUT (addUsersToGroup(groupId, userIds))</summary>
-
-add groupId to the end of string like this:  
-http://localhost:3000/groups/{groupId}  
-you need to send in your request:
-
-body = {  
- &ensp;userIds: UserId[];
-}  
-where UserId[] is an array of users Ids like this:  
-body = {  
- &ensp;userIds: [
-"545be190-1a7c-4a40-a1b7-7a957e53c27e",
-"63eaee99-b26c-4257-8d4d-dd445f591207",
-"85131302-7cee-4333-bdf3-cec578b64025"]  
- }
-
-</details>
-
-## Task 8 endpoints:
-
-<details><summary>POST</summary>
-
-http://localhost:3000/login  
-you need to send in your request:
-
-body = {  
- &ensp;login: "masha1";  
- &ensp;password: "pass1";  
- }
-
-after that u will have token for 1 hour, however u can change expiration time
-
- </details>
-
-## Task 9:
-
-<details><summary>POST</summary>
-
-http://localhost:3000/login  
-you need to send in your request:
-
-body = {  
- &ensp;login: "masha1";  
- &ensp;password: "pass1";  
- }
-
-after that u will have token for 1 hour, however u can change expiration time
-
- </details>
+Nest is [MIT licensed](LICENSE).
