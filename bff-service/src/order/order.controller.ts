@@ -3,7 +3,7 @@ import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 
-@Controller('order')
+@Controller('cart')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
@@ -13,8 +13,8 @@ export class OrderController {
   }
 
   @Get()
-  findAll() {
-    return this.orderService.findAll();
+  async findAll() {
+    return await this.orderService.findAll();
   }
 
   @Get(':id')
