@@ -10,6 +10,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
+    "deploy": "npm ci && npm run build && npm run start:prod",
     "eb-init": "eb init --platform node.js --region eu-west-1",
     "eb-create": "eb create development --single --cname dimonlev-bff-api-dev",
     "eb-terminate": "eb terminate",
